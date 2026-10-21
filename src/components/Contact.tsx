@@ -44,7 +44,7 @@ export default function Contact() {
             <ExternalLink
               key={link.label}
               href={link.href}
-              className="focus-ring group flex flex-col gap-2 border-b border-line py-6 first:border-t sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+              className="focus-ring group flex flex-col gap-2 border-b border-line px-3 py-6 transition-all duration-300 first:border-t hover:bg-paper-dim hover:px-6 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
             >
               <span className="font-mono text-xs uppercase tracking-wide text-ink-soft">
                 {link.label}
@@ -57,7 +57,7 @@ export default function Contact() {
             <a
               key={link.label}
               href={link.href}
-              className="focus-ring group flex flex-col gap-2 border-b border-line py-6 first:border-t sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
+              className="focus-ring group flex flex-col gap-2 border-b border-line px-3 py-6 transition-all duration-300 first:border-t hover:bg-paper-dim hover:px-6 sm:flex-row sm:items-baseline sm:justify-between sm:gap-6"
             >
               <span className="font-mono text-xs uppercase tracking-wide text-ink-soft">
                 {link.label}

@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Fraunces, Geist, Geist_Mono } from "next/font/google";
+import BackgroundLayer from "@/components/BackgroundLayer";
+import ScrollProgress from "@/components/ScrollProgress";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -48,13 +50,35 @@ export const metadata: Metadata = {
   },
 };
 
+const themeInitScript = `(function() {
+  try {
+    var stored = localStorage.getItem('theme');
+    var theme = stored === 'dark' || stored === 'light'
+      ? stored
+      : (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+    document.documentElement.setAttribute('data-theme', theme);
+  } catch (e) {}
+})();`;
+
 export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
+      suppressHydrationWarning
       className={`${geistSans.variable} ${geistMono.variable} ${fraunces.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-paper font-sans text-ink">
+      <head>
+        <meta name="theme-color" content="#f6f2ea" media="(prefers-color-scheme: light)" />
+        <meta name="theme-color" content="#14120d" media="(prefers-color-scheme: dark)" />
+        {/* Sets data-theme before paint so there's no flash of the wrong theme. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
+      <body
+        suppressHydrationWarning
+        className="min-h-full flex flex-col bg-paper font-sans text-ink"
+      >
+        <BackgroundLayer />
+        <ScrollProgress />
         <a
           href="#main-content"
           className="focus-ring sr-only rounded-sm bg-ink px-4 py-2 text-paper focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-100"

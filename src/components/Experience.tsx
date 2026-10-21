@@ -20,7 +20,15 @@ export default function Experience() {
       <div className="flex flex-col">
         {experience.map((entry, i) => (
           <RevealOnScroll key={entry.role + entry.org} delayMs={i * 80}>
-            <div className="grid grid-cols-1 gap-6 border-b border-line py-10 first:pt-0 last:border-none md:grid-cols-[1fr_2fr] md:gap-14">
+            <div className="relative grid grid-cols-1 gap-6 border-b border-line py-10 first:pt-0 last:border-none md:grid-cols-[1fr_2fr] md:gap-14 md:pl-8">
+              <span
+                aria-hidden="true"
+                className="absolute top-13 left-0 hidden h-2.5 w-2.5 -translate-x-1/2 rounded-full border-2 border-accent bg-paper md:block"
+              />
+              <span
+                aria-hidden="true"
+                className="absolute top-13 bottom-0 left-0 hidden w-px bg-line last:hidden md:block"
+              />
               <div>
                 <span className="font-mono text-xs uppercase tracking-wide text-accent">
                   {entry.type === "work" ? entry.period : "Training"}

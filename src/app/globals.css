@@ -8,6 +8,21 @@
   --color-accent: #c1440e;
   --color-accent-soft: #e2c3b2;
   --color-line: #ddd4c3;
+  --color-accent-glow: rgba(193, 68, 14, 0.16);
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
+  color-scheme: light;
+}
+
+:root[data-theme="dark"] {
+  --color-paper: #14120d;
+  --color-paper-dim: #1c1912;
+  --color-ink: #f3ede0;
+  --color-ink-soft: #b7ad9b;
+  --color-accent: #ff7a3d;
+  --color-accent-soft: #5a3420;
+  --color-line: #332c20;
+  --color-accent-glow: rgba(255, 122, 61, 0.2);
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -30,11 +45,91 @@ html {
 body {
   background: var(--color-paper);
   color: var(--color-ink);
+  transition: background-color 0.5s var(--ease-premium),
+    color 0.5s var(--ease-premium);
+}
+
+/* Lets plain elements (headings, borders, section backgrounds) that
+   don't carry their own Tailwind transition utility still cross-fade
+   smoothly when the theme attribute flips. Elements with an explicit
+   transition utility (higher specificity) keep their own timing. */
+*,
+*::before,
+*::after {
+  transition-property: background-color, border-color, color, fill;
+  transition-timing-function: var(--ease-premium);
+  transition-duration: 0.5s;
 }
 
 ::selection {
   background: var(--color-accent);
   color: var(--color-paper);
+}
+
+/* Fixed, subtle grain + glow layer that sits behind all content for a
+   premium, tactile background without resorting to generic gradients. */
+.bg-layer {
+  position: fixed;
+  inset: 0;
+  z-index: -10;
+  pointer-events: none;
+  background-image:
+    radial-gradient(
+      ellipse 900px 560px at 10% -8%,
+      var(--color-accent-glow),
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 700px 520px at 105% 18%,
+      color-mix(in srgb, var(--color-ink) 6%, transparent),
+      transparent 55%
+    ),
+    radial-gradient(
+      ellipse 640px 480px at 15% 108%,
+      color-mix(in srgb, var(--color-accent) 9%, transparent),
+      transparent 60%
+    );
+  transition: background-color 0.5s var(--ease-premium);
+}
+
+.bg-layer::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+}
+
+/* Thin accent progress indicator fixed to the top of the viewport. */
+.scroll-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 2px;
+  width: var(--scroll-progress, 0%);
+  background: var(--color-accent);
+  z-index: 60;
+  transition: width 0.1s linear;
+}
+
+/* Fine dot-grid texture used behind the hero section. */
+.dot-grid {
+  background-image: radial-gradient(
+    color-mix(in srgb, var(--color-ink) 16%, transparent) 1px,
+    transparent 1px
+  );
+  background-size: 22px 22px;
+  -webkit-mask-image: radial-gradient(
+    ellipse 90% 80% at 50% 20%,
+    black 10%,
+    transparent 75%
+  );
+  mask-image: radial-gradient(
+    ellipse 90% 80% at 50% 20%,
+    black 10%,
+    transparent 75%
+  );
 }
 
 .focus-ring {
@@ -61,13 +156,137 @@ body {
 
 .reveal {
   opacity: 0;
-  transform: translateY(16px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
+  transform: translateY(22px) scale(0.985);
+  filter: blur(6px);
+  transition: opacity 0.75s var(--ease-premium),
+    transform 0.75s var(--ease-premium), filter 0.75s var(--ease-premium);
+  will-change: opacity, transform, filter;
 }
 
 .reveal.is-visible {
   opacity: 1;
-  transform: translateY(0);
+  transform: translateY(0) scale(1);
+  filter: blur(0);
+}
+
+/* Staggered entrance for above-the-fold content that shouldn't wait on
+   scroll — the hero headline, eyebrow, copy, and CTAs. */
+@keyframes rise-in {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+    filter: blur(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+    filter: blur(0);
+  }
+}
+
+.rise-in {
+  opacity: 0;
+  animation: rise-in 0.85s var(--ease-premium) forwards;
+  animation-delay: var(--rise-delay, 0ms);
+}
+
+@keyframes soft-bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(6px);
+  }
+}
+
+.scroll-cue {
+  animation: soft-bounce 2.2s ease-in-out infinite;
+}
+
+/* Project preview hover: gentle lift and tilt, premium card behaviour. */
+.project-card {
+  transition: transform 0.5s var(--ease-premium),
+    box-shadow 0.5s var(--ease-premium), border-color 0.5s var(--ease-premium);
+}
+
+.project-card:hover,
+.project-card:focus-within {
+  transform: translateY(-6px);
+  box-shadow: 0 24px 48px -24px rgba(23, 21, 15, 0.28);
+  border-color: var(--color-accent);
+}
+
+.project-card-inner {
+  transition: transform 0.6s var(--ease-premium);
+}
+
+.project-card:hover .project-card-inner,
+.project-card:focus-within .project-card-inner {
+  transform: scale(1.035);
+}
+
+.arrow-nudge {
+  display: inline-block;
+  transition: transform 0.35s var(--ease-premium);
+}
+
+a:hover .arrow-nudge,
+a:focus-visible .arrow-nudge {
+  transform: translate(3px, -3px);
+}
+
+/* Theme toggle: sun/moon crossfade, driven purely by the data-theme
+   attribute so the icon state never needs a client re-render. */
+.theme-toggle {
+  position: relative;
+}
+
+.theme-toggle .icon-sun,
+.theme-toggle .icon-moon {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.4s var(--ease-premium),
+    transform 0.5s var(--ease-premium);
+}
+
+.theme-toggle .icon-sun {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+.theme-toggle .icon-moon {
+  opacity: 0;
+  transform: rotate(-90deg) scale(0.5);
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-sun {
+  opacity: 0;
+  transform: rotate(90deg) scale(0.5);
+}
+
+:root[data-theme="dark"] .theme-toggle .icon-moon {
+  opacity: 1;
+  transform: rotate(0deg) scale(1);
+}
+
+/* Circular reveal driven by the View Transitions API when the theme
+   is toggled — the new theme wipes in from the toggle button. */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -83,8 +302,23 @@ body {
     transition-duration: 0.001ms !important;
   }
 
-  .reveal {
+  .reveal,
+  .rise-in {
     opacity: 1;
+    transform: none;
+    filter: none;
+  }
+
+  .project-card:hover,
+  .project-card:focus-within,
+  .project-card:hover .project-card-inner,
+  .project-card:focus-within .project-card-inner {
+    transform: none;
+  }
+
+  .theme-toggle .icon-sun,
+  .theme-toggle .icon-moon {
+    transition: opacity 0.001ms linear;
     transform: none;
   }
 }

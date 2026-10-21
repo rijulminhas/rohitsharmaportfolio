@@ -26,7 +26,7 @@ export default function Projects() {
           <RevealOnScroll key={project.name} delayMs={i * 60}>
             <article className="grid grid-cols-1 items-center gap-8 border-b border-line pb-16 last:border-none last:pb-0 md:grid-cols-2 md:gap-14">
               <div className={i % 2 === 1 ? "md:order-2" : ""}>
-                <div className="aspect-[4/3]">
+                <div className="project-card aspect-4/3 overflow-hidden rounded-sm border border-transparent">
                   <ProjectVisual name={project.name} url={project.url} index={i} />
                 </div>
               </div>
@@ -47,7 +47,9 @@ export default function Projects() {
                     className="underline-link focus-ring mt-6 inline-flex items-center gap-2 font-mono text-xs uppercase tracking-wide text-ink"
                   >
                     Visit Website
-                    <span aria-hidden="true">&#8599;</span>
+                    <span aria-hidden="true" className="arrow-nudge">
+                      &#8599;
+                    </span>
                   </ExternalLink>
                 ) : null}
               </div>
@@ -64,10 +66,12 @@ export default function Projects() {
           {supporting.map((project) => (
             <li
               key={project.name}
-              className="flex flex-col gap-2 py-5 sm:flex-row sm:items-center sm:justify-between sm:gap-6"
+              className="group flex flex-col gap-2 px-3 py-5 transition-colors duration-300 hover:bg-paper-dim sm:flex-row sm:items-center sm:justify-between sm:gap-6"
             >
               <div>
-                <p className="font-display text-xl text-ink">{project.name}</p>
+                <p className="font-display text-xl text-ink transition-colors duration-300 group-hover:text-accent">
+                  {project.name}
+                </p>
                 <p className="mt-1 max-w-lg text-sm leading-relaxed text-ink-soft">
                   {project.description}
                 </p>
@@ -77,7 +81,10 @@ export default function Projects() {
                   href={project.url}
                   className="underline-link focus-ring shrink-0 font-mono text-xs uppercase tracking-wide text-ink"
                 >
-                  Visit Website &#8599;
+                  Visit Website{" "}
+                  <span aria-hidden="true" className="arrow-nudge">
+                    &#8599;
+                  </span>
                 </ExternalLink>
               ) : (
                 <span className="shrink-0 font-mono text-xs uppercase tracking-wide text-ink-soft/70">

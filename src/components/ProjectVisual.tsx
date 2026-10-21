@@ -24,7 +24,7 @@ export default function ProjectVisual({ name, url, index }: ProjectVisualProps) 
 
   return (
     <div
-      className="flex h-full w-full flex-col overflow-hidden rounded-sm border border-line"
+      className="project-card-inner flex h-full w-full flex-col overflow-hidden rounded-sm border border-line"
       style={{ backgroundColor: tone.bg }}
     >
       <div className="flex items-center gap-2 border-b border-black/10 px-4 py-3">

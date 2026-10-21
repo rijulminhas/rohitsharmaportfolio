@@ -22,7 +22,7 @@ export default function Skills() {
               {group.items.map((item) => (
                 <li
                   key={item}
-                  className="text-sm leading-relaxed text-ink-soft"
+                  className="-mx-2 rounded-sm px-2 py-0.5 text-sm leading-relaxed text-ink-soft transition-all duration-200 hover:translate-x-1 hover:bg-paper-dim hover:text-ink"
                 >
                   {item}
                 </li>
